@@ -35,12 +35,24 @@ public class Duke {
         display("\t Hello I'm Duke\n\t What can I do for you ?");
         String user = sc.nextLine();
         while (!user.equals("bye")){
-            if (!user.equals("list")){
-                display("\t added: "+ user);
-                tasks.add("\t "+tasks.size()+". "+user);
+            if (user.equals("list")){
+                displayList(tasks);
+            }
+            else if(user.matches("done \\d+")) {
+                    // if it is done and a number
+                    try {
+                        int index = Integer.parseInt(user.substring(5, user.length())) - 1;
+                        tasks.set(index, tasks.get(index).replace("✗", "✓")); // replacement ✗ by ✓
+                        display("\t Nice! I've marked this task as done:\n" + tasks.get(index));
+                    }
+                    catch (Exception e) { // done a task which doesn't exist is considered to add a task
+                        display("\t added: "+ user);
+                        tasks.add("\t "+ (tasks.size()+1) +". [✗] "+user);
+                    }
             }
             else{
-                displayList(tasks);
+                display("\t added: "+ user);
+                tasks.add("\t "+ (tasks.size()+1) +". [✗] "+user);
             }
             user=sc.nextLine();
         }
