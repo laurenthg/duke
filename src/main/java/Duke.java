@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
 public class Duke {
 
     private static void display(String s){
@@ -11,10 +10,10 @@ public class Duke {
         System.out.println("\t---------------------------------------------------------------------------------");
     }
 
-    private static void displayList(List<String> tasks){
+    private static void displayList(List<Task> tasks){
         System.out.println("\t---------------------------------------------------------------------------------");
-        for (String s :tasks){
-            System.out.println(s);
+        for (int i = 0 ;i< tasks.size() ; i++ ){
+            System.out.println("\t "+ (i+1) + ". " + tasks.get(i).getMark() + " " +tasks.get(i).getTask());
         }
         System.out.println("\t---------------------------------------------------------------------------------");
     }
@@ -30,7 +29,7 @@ public class Duke {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        List<String> tasks = new ArrayList<String>();
+        List<Task> tasks = new ArrayList<Task>();
         displayLogo();
         display("\t Hello I'm Duke\n\t What can I do for you ?");
         String user = sc.nextLine();
@@ -39,20 +38,21 @@ public class Duke {
                 displayList(tasks);
             }
             else if(user.matches("done \\d+")) {
-                    // if it is done and a number
+                    // if it is done and a number of task
                     try {
                         int index = Integer.parseInt(user.substring(5, user.length())) - 1;
-                        tasks.set(index, tasks.get(index).replace("✗", "✓")); // replacement ✗ by ✓
-                        display("\t Nice! I've marked this task as done:\n" + tasks.get(index));
+                        tasks.get(index).taskDone();
+                        display("\t Nice! I've marked this task as done:\n\t " + tasks.get(index).getMark() + " "
+                                + tasks.get(index).getTask());
                     }
                     catch (Exception e) { // done a task which doesn't exist is considered to add a task
                         display("\t added: "+ user);
-                        tasks.add("\t "+ (tasks.size()+1) +". [✗] "+user);
+                        tasks.add(new Task(user));
                     }
             }
             else{
                 display("\t added: "+ user);
-                tasks.add("\t "+ (tasks.size()+1) +". [✗] "+user);
+                tasks.add(new Task(user));
             }
             user=sc.nextLine();
         }
