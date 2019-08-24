@@ -39,15 +39,14 @@ public class Duke {
             }
             else if(user.matches("done \\d+")) {
                     // if it is done and a number of task
-                    try {
-                        int index = Integer.parseInt(user.substring(5, user.length())) - 1;
+                    int index = Integer.parseInt(user.substring(5, user.length())) - 1;
+                    if(index>tasks.size()-1 || index<0) {
+                        display("\t The task doesn't exist");
+                    }
+                    else{
                         tasks.get(index).taskDone();
                         display("\t Nice! I've marked this task as done:\n\t " + tasks.get(index).getMark() + " "
                                 + tasks.get(index).getTask());
-                    }
-                    catch (Exception e) { // done a task which doesn't exist is considered to add a task
-                        display("\t added: "+ user);
-                        tasks.add(new Task(user));
                     }
             }
             else{
