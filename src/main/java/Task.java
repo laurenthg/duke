@@ -1,22 +1,23 @@
-public class Task {
+abstract class Task {
     private String task;
     private String mark;
 
-    public Task (String task){
+    protected Task (String task){
         this.task = task;
         this.mark = "[✗]";
     }
 
-    public void taskDone(){
+    protected void taskDone(){
         this.mark = "[✓]";
     }
 
-    public String getTask(){
+    protected String getTask(){
         return this.task;
     }
 
-    public String getMark(){
+    protected String getMark(){
         return this.mark;
     }
 
+    public abstract String getTag();
 }
