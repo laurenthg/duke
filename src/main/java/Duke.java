@@ -14,7 +14,17 @@ public class Duke {
         System.out.println("\t---------------------------------------------------------------------------------");
         System.out.println("\t Here are the tasks in your list:");
         for (int i = 0 ;i< tasks.size() ; i++ ){
-            System.out.println("\t "+ (i+1) + ". " + tasks.get(i).getTag() +tasks.get(i).getMark() + " " +tasks.get(i).getTask());
+            Task t = tasks.get(i);
+            System.out.print("\t "+ (i+1) + ". " + t.getTag() +t.getMark() + " " +t.getTask());
+            if (t instanceof deadlinesTask){
+                System.out.println(((deadlinesTask) t).getDeadlines());
+            }
+            else if ( t instanceof eventsTask){
+                System.out.println(((eventsTask) t).getPeriod());
+            }
+            else {
+                System.out.println("");
+            }
         }
         System.out.println("\t---------------------------------------------------------------------------------");
     }
@@ -40,14 +50,14 @@ public class Duke {
                     displayList(tasks);
                 }
                 else {
-                    display("\t There is any task yet ");
+                    display("\t ☹ OOPS!!! There is any task yet ");
                 }
             }
             else if(user.matches("done \\d+")) {
                     // if it is done and a number of task
                     int index = Integer.parseInt(user.substring(5, user.length())) - 1;
                     if(index>tasks.size()-1 || index<0) {
-                        display("\t The task doesn't exist");
+                        display("\t ☹ OOPS!!! The task doesn't exist");
                     }
                     else{
                         tasks.get(index).taskDone();
@@ -56,8 +66,8 @@ public class Duke {
                     }
             }
             else if (user.matches("todo(.*)")){
-                if (user.substring(5).isEmpty()){
-                    display("\t Please clarify the task");
+                if (user.substring(5).isBlank()){
+                    display("\t ☹ OOPS!!! The description of a todo cannot be empty.");
                 }
                 else {
                     tasks.add(new todoTask(user.substring(5)));
@@ -70,7 +80,10 @@ public class Duke {
             else if (user.matches("deadline(.*)")){
                 String[] taskDescription = user.substring(9).split("/by");
                 if (taskDescription.length == 1){ // no /by in input
-                    display("\t Please enter a deadline for the task");
+                    display("\t ☹ OOPS!!! Please enter a deadline for the task");
+                }
+                else if (taskDescription[0].isBlank()){
+                    display("\t ☹ OOPS!!! The description of a deadline task cannot be empty");
                 }
                 else {
                     String description = taskDescription[0];
@@ -85,7 +98,10 @@ public class Duke {
             else if (user.matches("event(.*)")){
                 String[] taskDescription = user.substring(6).split("/at");
                 if (taskDescription.length == 1){ // no /by in input
-                    display("\t Please enter a period for the task");
+                    display("\t ☹ OOPS!!! Please enter a period for the task");
+                }
+                else if (taskDescription[0].isBlank()){
+                    display("\t ☹ OOPS!!! The description of a event task cannot be empty");
                 }
                 else {
                     String description = taskDescription[0];
@@ -98,11 +114,10 @@ public class Duke {
                 }
             }
             else{
-                display("\t Sorry, I don't understand");
+                display("\t ☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
             }
             user=sc.nextLine();
         }
         display("\t Bye. Hope to see you again soon!");
-
     }
 }
