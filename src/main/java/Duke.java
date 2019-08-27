@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Duke {
 
-    private static void display(String s){
+    public static void display(String s){ // Used by Exception Classes
         System.out.println("\t---------------------------------------------------------------------------------");
         System.out.println(s);
         System.out.println("\t---------------------------------------------------------------------------------");
@@ -45,76 +45,98 @@ public class Duke {
         display("\t Hello I'm Duke\n\t What can I do for you ?");
         String user = sc.nextLine();
         while (!user.equals("bye")){
-            if (user.equals("list")){
-                if (tasks.size()!=0){
-                    displayList(tasks);
+            try {
+                if (user.equals("list")) {
+                    if (tasks.size() != 0) {
+                        displayList(tasks);
+                    } else {
+                        display("\t There is any task yet ");
+                    }
                 }
-                else {
-                    display("\t ☹ OOPS!!! There is any task yet ");
-                }
-            }
-            else if(user.matches("done \\d+")) {
+                else if (user.matches("done \\d+")) {
                     // if it is done and a number of task
                     int index = Integer.parseInt(user.substring(5, user.length())) - 1;
-                    if(index>tasks.size()-1 || index<0) {
-                        display("\t ☹ OOPS!!! The task doesn't exist");
+                    if (index > tasks.size() - 1 || index < 0) {
+                        throw new inexistentTaskException();
                     }
-                    else{
+                    else {
                         tasks.get(index).taskDone();
                         display("\t Nice! I've marked this task as done:\n\t " + tasks.get(index).getTag() +
-                                tasks.get(index).getMark() + " " + tasks.get(index).getTask());
+                                    tasks.get(index).getMark() + " " + tasks.get(index).getTask());
                     }
-            }
-            else if (user.matches("todo(.*)")){
-                if (user.substring(5).isBlank()){
-                    display("\t ☹ OOPS!!! The description of a todo cannot be empty.");
+                }
+                else if (user.matches("todo(.*)")) {
+                    if (user.substring(5).isBlank()) {
+                        throw new emptyTodoException();
+                    }
+                    else {
+                        tasks.add(new todoTask(user.substring(5)));
+                        todoTask newTask = (todoTask) tasks.get(tasks.size() - 1);
+                        display("\t Got it. I've added this task:\n\t   "
+                                    + newTask.getTag() + newTask.getMark() + newTask.getTask() +
+                                    "\n\t Now you have " + tasks.size() + " tasks in the list.");
+                    }
+                }
+                else if (user.matches("deadline(.*)")) {
+                    String[] taskDescription = user.substring(9).split("/by");
+                    if (taskDescription[0].isBlank()) {
+                        throw new emptyDeadlineException();
+                    }
+                    else if (taskDescription.length == 1) { // no /by in input
+                        throw new emptyDeadlineDateException();
+                    }
+                    else {
+                        String description = taskDescription[0];
+                        String deadline = "(by:" + taskDescription[1] + ")";
+                        tasks.add(new deadlinesTask(description, deadline));
+                        deadlinesTask newTask = (deadlinesTask) tasks.get(tasks.size() - 1);
+                        display("\t Got it. I've added this task:\n\t   "
+                                + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getDeadlines() +
+                                    "\n\t Now you have " + tasks.size() + " tasks in the list.");
+                    }
+                }
+                else if (user.matches("event(.*)")) {
+                    String[] taskDescription = user.substring(6).split("/at");
+                    if (taskDescription[0].isBlank()) {
+                        throw new emptyEventException();
+                    }
+                    else if (taskDescription.length == 1) { // no /by in input
+                        throw new emptyEventDateException();
+                    }
+                    else {
+                        String description = taskDescription[0];
+                        String period = "(at:" + taskDescription[1] + ")";
+                        tasks.add(new eventsTask(description, period));
+                        eventsTask newTask = (eventsTask) tasks.get(tasks.size() - 1);
+                        display("\t Got it. I've added this task:\n\t   "
+                                + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getPeriod() +
+                                "\n\t Now you have " + tasks.size() + " tasks in the list.");
+                    }
                 }
                 else {
-                    tasks.add(new todoTask(user.substring(5)));
-                    todoTask newTask = (todoTask) tasks.get(tasks.size() - 1);
-                    display("\t Got it. I've added this task:\n\t   "
-                            + newTask.getTag() + newTask.getMark() + newTask.getTask() +
-                            "\n\t Now you have " + tasks.size() + " tasks in the list.");
+                    throw new unmeaningException();
                 }
             }
-            else if (user.matches("deadline(.*)")){
-                String[] taskDescription = user.substring(9).split("/by");
-                if (taskDescription.length == 1){ // no /by in input
-                    display("\t ☹ OOPS!!! Please enter a deadline for the task");
-                }
-                else if (taskDescription[0].isBlank()){
-                    display("\t ☹ OOPS!!! The description of a deadline task cannot be empty");
-                }
-                else {
-                    String description = taskDescription[0];
-                    String deadline = "(by:" + taskDescription[1] + ")";
-                    tasks.add(new deadlinesTask(description,deadline));
-                    deadlinesTask newTask = (deadlinesTask) tasks.get(tasks.size()-1);
-                    display("\t Got it. I've added this task:\n\t   "
-                            + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getDeadlines() +
-                            "\n\t Now you have " + tasks.size() + " tasks in the list.");
-                }
+            catch (inexistentTaskException e) {
+                e.print();
             }
-            else if (user.matches("event(.*)")){
-                String[] taskDescription = user.substring(6).split("/at");
-                if (taskDescription.length == 1){ // no /by in input
-                    display("\t ☹ OOPS!!! Please enter a period for the task");
-                }
-                else if (taskDescription[0].isBlank()){
-                    display("\t ☹ OOPS!!! The description of a event task cannot be empty");
-                }
-                else {
-                    String description = taskDescription[0];
-                    String period = "(at:" + taskDescription[1] + ")";
-                    tasks.add(new eventsTask(description,period));
-                    eventsTask newTask = (eventsTask) tasks.get(tasks.size()-1);
-                    display("\t Got it. I've added this task:\n\t   "
-                            + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getPeriod() +
-                            "\n\t Now you have " + tasks.size() + " tasks in the list.");
-                }
+            catch (emptyTodoException e) {
+                e.print();
             }
-            else{
-                display("\t ☹ OOPS!!! I'm sorry, but I don't know what that means :-(");
+            catch (emptyDeadlineDateException e) {
+                e.print();
+            }
+            catch (emptyDeadlineException e) {
+                e.print();
+            }
+            catch (emptyEventDateException e) {
+                e.print();
+            }
+            catch (emptyEventException e) {
+                e.print();
+            }
+            catch (unmeaningException e) {
+                e.print();
             }
             user=sc.nextLine();
         }
