@@ -66,11 +66,11 @@ public class Duke {
                     }
                 }
                 else if (user.matches("todo(.*)")) {
-                    if (user.substring(5).isBlank()) {
+                    if (user.substring(4).isBlank()) {
                         throw new emptyTodoException();
                     }
                     else {
-                        tasks.add(new todoTask(user.substring(5)));
+                        tasks.add(new todoTask(user.substring(4).trim()));
                         todoTask newTask = (todoTask) tasks.get(tasks.size() - 1);
                         display("\t Got it. I've added this task:\n\t   "
                                     + newTask.getTag() + newTask.getMark() + newTask.getTask() +
@@ -78,7 +78,7 @@ public class Duke {
                     }
                 }
                 else if (user.matches("deadline(.*)")) {
-                    String[] taskDescription = user.substring(9).split("/by");
+                    String[] taskDescription = user.substring(8).trim().split("/by");
                     if (taskDescription[0].isBlank()) {
                         throw new emptyDeadlineException();
                     }
@@ -96,7 +96,7 @@ public class Duke {
                     }
                 }
                 else if (user.matches("event(.*)")) {
-                    String[] taskDescription = user.substring(6).split("/at");
+                    String[] taskDescription = user.substring(5).trim().split("/at");
                     if (taskDescription[0].isBlank()) {
                         throw new emptyEventException();
                     }
@@ -117,25 +117,7 @@ public class Duke {
                     throw new unmeaningException();
                 }
             }
-            catch (inexistentTaskException e) {
-                e.print();
-            }
-            catch (emptyTodoException e) {
-                e.print();
-            }
-            catch (emptyDeadlineDateException e) {
-                e.print();
-            }
-            catch (emptyDeadlineException e) {
-                e.print();
-            }
-            catch (emptyEventDateException e) {
-                e.print();
-            }
-            catch (emptyEventException e) {
-                e.print();
-            }
-            catch (unmeaningException e) {
+            catch (dukeException e ){ // catch one of subclass of dukeException and print the right message
                 e.print();
             }
             user=sc.nextLine();
