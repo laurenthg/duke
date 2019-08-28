@@ -6,5 +6,11 @@ public class todoTask extends Task{
         this.tag ="[T]";
     }
 
+    public todoTask(String task, String mark){
+        super(task);
+        super.setMark(mark);
+        this.tag ="[T]";
+    }
+
     public String getTag(){ return this.tag;}
 }

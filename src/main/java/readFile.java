@@ -21,6 +21,10 @@ public class readFile {
         */
     }
 
+    public BufferedReader getBufferedReader() {
+        return bufferedR;
+    }
+
     public void freeBufferedReader(){
         try {
             this.bufferedR.close();

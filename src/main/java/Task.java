@@ -6,6 +6,9 @@ abstract class Task {
         this.task = task;
         this.mark = "[✗]";
     }
+    protected void setMark(String mark){
+        this.mark= mark;
+    }
 
     protected void taskDone(){
         this.mark = "[✓]";

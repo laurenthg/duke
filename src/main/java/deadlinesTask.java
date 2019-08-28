@@ -8,6 +8,13 @@ public class deadlinesTask extends Task{
         this.deadlines = deadlines;
     }
 
+    public deadlinesTask(String task, String mark, String deadlines){
+        super(task);
+        super.setMark(mark);
+        this.tag ="[D]";
+        this.deadlines = deadlines;
+    }
+
     public String getTag(){ return this.tag;}
 
     public String getDeadlines(){ return this.deadlines;}

@@ -1,15 +1,20 @@
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Duke {
 
-    public static void display(String s){ // Used by Exception Classes
+    public static void display(String s){ // Used also by Exception Classes
         System.out.println("\t---------------------------------------------------------------------------------");
         System.out.println(s);
         System.out.println("\t---------------------------------------------------------------------------------");
     }
 
+    /*
+    Display the list of tasks
+     */
     private static void displayList(List<Task> tasks){
         System.out.println("\t---------------------------------------------------------------------------------");
         System.out.println("\t Here are the tasks in your list:");
@@ -38,9 +43,45 @@ public class Duke {
         System.out.println(logo);
     }
 
+    /*
+    Initialization of the tasks list by reading the data file
+     */
+    private static void initialization(List<Task> tasks, BufferedReader bufferedReader){
+        try{
+            String readLine = bufferedReader.readLine();
+            String[] line;
+            String mark = "";
+            while (readLine != null && !readLine.isBlank()){
+                line = readLine.split("//");
+                mark = line[2];
+                switch ( line[1] ){
+                    case "[T]":
+                        tasks.add(new todoTask(line[3],mark));
+                        break;
+                    case "[D]":
+                        tasks.add(new deadlinesTask(line[3],mark,line[4]));
+                        break;
+                    case "[E]":
+                        tasks.add(new eventsTask(line[3],mark,line[4]));
+                }
+                readLine = bufferedReader.readLine();
+            }
+        }
+        catch (IOException e ){
+            display("\t IOException: \n\t\t error when readFile for initialization of tasks list");
+        }
+    }
+
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        List<Task> tasks = new ArrayList<Task>();
+        List<Task> tasks = new ArrayList<Task>(); // list of tasks
+        String file = System.getProperty("user.dir")+ "/data/duke.txt"; //file path
+        readFile rFile = new readFile(file);// reader for initialization of tasks list
+        BufferedReader bufferedReader = rFile.getBufferedReader();
+        initialization(tasks,bufferedReader); //initialization of tasks list from the Duke.txt datafile
+        rFile.freeBufferedReader();
+        writeFile wFile = new writeFile(file,true); // true: writer of file by appending txt
         displayLogo();
         display("\t Hello I'm Duke\n\t What can I do for you ?");
         String user = sc.nextLine();
@@ -49,18 +90,44 @@ public class Duke {
                 if (user.equals("list")) {
                     if (tasks.size() != 0) {
                         displayList(tasks);
-                    } else {
+                    }
+                    else {
                         display("\t There is any task yet ");
                     }
                 }
-                else if (user.matches("done \\d+")) {
-                    // if it is done and a number of task
-                    int index = Integer.parseInt(user.substring(5, user.length())) - 1;
+                else if (user.matches("done \\d+")) {// if it is done and a number of task
+                    int index = Integer.parseInt(user.substring(5)) - 1;
                     if (index > tasks.size() - 1 || index < 0) {
                         throw new inexistentTaskException();
                     }
-                    else {
+                    else { // to change the mark, the whole file is rewritten ( probably a better way to do it)
                         tasks.get(index).taskDone();
+                        Task task = tasks.get(index);
+                        String text="" , line ="", oldLine =(index+1)+"//"+task.getTag()+"//"+"[✗]" ,
+                                newLine =(index+1)+"//"+task.getTag()+"//"+task.getMark();
+                        readFile readFile = new readFile(file);// reader to read before change the data file
+                        BufferedReader bufferedR = readFile.getBufferedReader();
+                        try{
+                            while ((line = bufferedR.readLine()) != null) {
+                                if (line.contains(oldLine)){
+                                    line = line.replace(oldLine,newLine);
+                                }
+                                text += line + "\n";
+                            }
+                        }
+                        catch(IOException e){
+                            display("\t IOException: \n\t\t error when reading the whole file");
+                        }
+                        readFile.freeBufferedReader(); //close the reader
+                        // false :// rewriter of file by replacing the whole file
+                        writeFile rwFile = new writeFile(file,false);
+                        try{
+                            rwFile.write(text);
+                        }
+                        catch (IOException e){
+                            display("\t IOException: \n\t\t error when writing the whole file");
+                        }
+                        rwFile.freeBufferedWriter();//free the writer
                         display("\t Nice! I've marked this task as done:\n\t " + tasks.get(index).getTag() +
                                     tasks.get(index).getMark() + " " + tasks.get(index).getTask());
                     }
@@ -72,13 +139,20 @@ public class Duke {
                     else {
                         tasks.add(new todoTask(user.substring(4).trim()));
                         todoTask newTask = (todoTask) tasks.get(tasks.size() - 1);
+                        try {
+                            wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
+                                    newTask.getMark() + "//" + newTask.getTask()+"\n");
+                        }
+                        catch (IOException e){
+                            display("\t IOException:\n\t\t error when writing a todoTask to file");
+                        }
                         display("\t Got it. I've added this task:\n\t   "
                                     + newTask.getTag() + newTask.getMark() + newTask.getTask() +
                                     "\n\t Now you have " + tasks.size() + " tasks in the list.");
                     }
                 }
-                else if (user.matches("deadline(.*)")) {
-                    String[] taskDescription = user.substring(8).trim().split("/by");
+                else if (user.matches("deadline (.*)")) {
+                    String[] taskDescription = user.substring(8).split("/by");
                     if (taskDescription[0].isBlank()) {
                         throw new emptyDeadlineException();
                     }
@@ -86,17 +160,24 @@ public class Duke {
                         throw new emptyDeadlineDateException();
                     }
                     else {
-                        String description = taskDescription[0];
+                        String description = taskDescription[0].trim();
                         String deadline = "(by:" + taskDescription[1] + ")";
                         tasks.add(new deadlinesTask(description, deadline));
                         deadlinesTask newTask = (deadlinesTask) tasks.get(tasks.size() - 1);
+                        try {
+                            wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
+                                    newTask.getMark() + "//" + newTask.getTask() + "//"+ newTask.getDeadlines()+"\n");
+                        }
+                        catch (IOException e){
+                            display("\t IOException:\n\t\t error when writing a deadline to file");
+                        }
                         display("\t Got it. I've added this task:\n\t   "
                                 + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getDeadlines() +
                                     "\n\t Now you have " + tasks.size() + " tasks in the list.");
                     }
                 }
-                else if (user.matches("event(.*)")) {
-                    String[] taskDescription = user.substring(5).trim().split("/at");
+                else if (user.matches("event (.*)")) {
+                    String[] taskDescription = user.substring(5).split("/at");
                     if (taskDescription[0].isBlank()) {
                         throw new emptyEventException();
                     }
@@ -104,10 +185,17 @@ public class Duke {
                         throw new emptyEventDateException();
                     }
                     else {
-                        String description = taskDescription[0];
+                        String description = taskDescription[0].trim();
                         String period = "(at:" + taskDescription[1] + ")";
                         tasks.add(new eventsTask(description, period));
                         eventsTask newTask = (eventsTask) tasks.get(tasks.size() - 1);
+                        try {
+                            wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
+                                    newTask.getMark() + "//" + newTask.getTask() + "//"+ newTask.getPeriod()+"\n");
+                        }
+                        catch (IOException e){
+                            display("\t IOException:\n\t\t error when writing a event to file");
+                        }
                         display("\t Got it. I've added this task:\n\t   "
                                 + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getPeriod() +
                                 "\n\t Now you have " + tasks.size() + " tasks in the list.");
@@ -123,5 +211,6 @@ public class Duke {
             user=sc.nextLine();
         }
         display("\t Bye. Hope to see you again soon!");
+        wFile.freeBufferedWriter();  // close() bufferedwriter
     }
 }
