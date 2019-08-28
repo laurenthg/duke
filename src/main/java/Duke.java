@@ -26,7 +26,8 @@ public class Duke {
                 System.out.println( " by:" + ((deadlinesTask) t).getDeadlines());
             }
             else if ( t instanceof eventsTask){
-                System.out.println(((eventsTask) t).getPeriod());
+                System.out.println( " at:" +
+                        ((eventsTask) t).getDateFirst() + " - " + ((eventsTask) t).getDateSecond());
             }
             else {
                 System.out.println("");
@@ -63,7 +64,8 @@ public class Duke {
                         tasks.add(new deadlinesTask(line[3],mark,stringToDate(line[4].substring(4).trim())));
                         break;
                     case "[E]":
-                        tasks.add(new eventsTask(line[3],mark,line[4]));
+                        tasks.add(
+                                new eventsTask(line[3],mark,stringToDate(line[4].substring(4)), stringToDate(line[5])));
                 }
                 readLine = bufferedReader.readLine();
             }
@@ -238,19 +240,32 @@ public class Duke {
                     }
                     else {
                         String description = taskDescription[0].trim();
-                        String period = "(at:" + taskDescription[1] + ")";
-                        tasks.add(new eventsTask(description, period));
-                        eventsTask newTask = (eventsTask) tasks.get(tasks.size() - 1);
-                        try {
-                            wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
-                                    newTask.getMark() + "//" + newTask.getTask() + "//"+ newTask.getPeriod()+"\n");
+                        String periodString = taskDescription[1].trim();
+                        //date format used: dd/MM/yyyy HH:mm - dd/MM/yyyy HH:mm
+                        String regex ="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9] " +
+                                "- [0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]";
+                        if (!periodString.matches(regex)) {
+                            throw new dateEventFormatException();
                         }
-                        catch (IOException e){
-                            display("\t IOException:\n\t\t error when writing a event to file");
+                        else {
+                            String[] dateString = periodString.split(" - ");
+                            date dateFirst = stringToDate(dateString[0]);
+                            date dateSecond = stringToDate(dateString[1]);
+                            tasks.add(new eventsTask(description, dateFirst,dateSecond));
+                            eventsTask newTask = (eventsTask) tasks.get(tasks.size() - 1);
+                            try {
+                                wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
+                                        newTask.getMark() + "//" + newTask.getTask() + "//"+
+                                        " at:" + newTask.getDateFirst() + "//" + newTask.getDateSecond()+"\n");
+                            }
+                            catch (IOException e){
+                                display("\t IOException:\n\t\t error when writing a event to file");
+                            }
+                            display("\t Got it. I've added this task:\n\t   "
+                                    + newTask.getTag() + newTask.getMark() + newTask.getTask() + " at:"
+                                            + newTask.getDateFirst() + " - " + newTask.getDateSecond() +
+                                    "\n\t Now you have " + tasks.size() + " tasks in the list.");
                         }
-                        display("\t Got it. I've added this task:\n\t   "
-                                + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getPeriod() +
-                                "\n\t Now you have " + tasks.size() + " tasks in the list.");
                     }
                 }
                 else {
