@@ -1,14 +1,14 @@
 public class deadlinesTask extends Task{
     private String tag; // [D]
-    private String deadlines;
+    private date deadlines;
 
-    public deadlinesTask(String task, String deadlines){
+    public deadlinesTask(String task, date deadlines){
         super(task);
         this.tag ="[D]";
         this.deadlines = deadlines;
     }
 
-    public deadlinesTask(String task, String mark, String deadlines){
+    public deadlinesTask(String task, String mark, date deadlines){
         super(task);
         super.setMark(mark);
         this.tag ="[D]";
@@ -17,6 +17,6 @@ public class deadlinesTask extends Task{
 
     public String getTag(){ return this.tag;}
 
-    public String getDeadlines(){ return this.deadlines;}
+    public date getDeadlines(){ return this.deadlines;}
 }
 

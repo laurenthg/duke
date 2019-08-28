@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,7 +23,7 @@ public class Duke {
             Task t = tasks.get(i);
             System.out.print("\t "+ (i+1) + ". " + t.getTag() +t.getMark() + " " +t.getTask());
             if (t instanceof deadlinesTask){
-                System.out.println(((deadlinesTask) t).getDeadlines());
+                System.out.println( " by:" + ((deadlinesTask) t).getDeadlines());
             }
             else if ( t instanceof eventsTask){
                 System.out.println(((eventsTask) t).getPeriod());
@@ -59,7 +60,7 @@ public class Duke {
                         tasks.add(new todoTask(line[3],mark));
                         break;
                     case "[D]":
-                        tasks.add(new deadlinesTask(line[3],mark,line[4]));
+                        tasks.add(new deadlinesTask(line[3],mark,stringToDate(line[4].substring(4).trim())));
                         break;
                     case "[E]":
                         tasks.add(new eventsTask(line[3],mark,line[4]));
@@ -67,9 +68,51 @@ public class Duke {
                 readLine = bufferedReader.readLine();
             }
         }
-        catch (IOException e ){
+        catch (IOException e){
             display("\t IOException: \n\t\t error when readFile for initialization of tasks list");
         }
+        catch (inexistentDateException e){
+            e.print();
+        }
+    }
+
+    private static date stringToDate(String deadlineString) throws inexistentDateException {
+        String[] dateString = deadlineString.split(" ");
+        String[] daysString = dateString[0].split("/");
+        String[] hoursString = dateString[1].split(":");
+        int day = Integer.parseInt(daysString[0]);
+        int month = Integer.parseInt(daysString[1]) -1 ;// Convention of Gregorian Calendar Jan= 0; Feb =1; Dec =11;
+        int year = Integer.parseInt(daysString[2]);
+        int hrs= Integer.parseInt(hoursString[0]) ;
+        int min = Integer.parseInt(hoursString[1]);
+        if (min<0 || min >59){
+            throw new inexistentDateException();
+        }
+        if (hrs <0 || hrs >23){
+            throw new inexistentDateException();
+        }
+        switch( month){
+            case 0: case 2: case 4: case 6: case 7: case 9: case 11: // month with 31 days : 11 for december
+                if (day > 31 || day <0) {
+                    throw new inexistentDateException();
+                }
+                break;
+            case 3 : case 5: case 8: case 10: // month with 31 days
+                if (day > 30 || day <0) {
+                    throw new inexistentDateException();
+                }
+                break;
+            case 1 : // February
+                // second part : no leap year and day==29
+                if ((day >29 || day < 0) || ((!((year % 4 ==0 && year % 100 != 0) || year % 400 == 0))&& day==29) ){
+                    throw new inexistentDateException();
+                }
+                break;
+            default:
+                throw new inexistentDateException();
+            }
+        GregorianCalendar d = new GregorianCalendar(year,month,day,hrs,min);
+        return new date(d);
     }
 
 
@@ -161,19 +204,28 @@ public class Duke {
                     }
                     else {
                         String description = taskDescription[0].trim();
-                        String deadline = "(by:" + taskDescription[1] + ")";
-                        tasks.add(new deadlinesTask(description, deadline));
-                        deadlinesTask newTask = (deadlinesTask) tasks.get(tasks.size() - 1);
-                        try {
-                            wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
-                                    newTask.getMark() + "//" + newTask.getTask() + "//"+ newTask.getDeadlines()+"\n");
+                        String deadlineString = taskDescription[1].trim();
+                        //date format used: dd/MM/yyyy HH:mm
+                        String regex ="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]";
+                        if (!deadlineString.matches(regex)) {
+                            throw new dateFormatException();
                         }
-                        catch (IOException e){
-                            display("\t IOException:\n\t\t error when writing a deadline to file");
-                        }
-                        display("\t Got it. I've added this task:\n\t   "
-                                + newTask.getTag() + newTask.getMark() + newTask.getTask() + newTask.getDeadlines() +
+                        else {
+                            date deadline = stringToDate(deadlineString);
+                            tasks.add(new deadlinesTask(description, deadline));
+                            deadlinesTask newTask = (deadlinesTask) tasks.get(tasks.size() - 1);
+                            try {
+                                wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
+                                        newTask.getMark() + "//" + newTask.getTask() + "//" + " by:"
+                                        +newTask.getDeadlines() + "\n");
+                            } catch (IOException e) {
+                                display("\t IOException:\n\t\t error when writing a deadline to file");
+                            }
+                            display("\t Got it. I've added this task:\n\t   "
+                                    + newTask.getTag() + newTask.getMark() + newTask.getTask() + " by:"
+                                    + newTask.getDeadlines() +
                                     "\n\t Now you have " + tasks.size() + " tasks in the list.");
+                        }
                     }
                 }
                 else if (user.matches("event (.*)")) {
@@ -205,7 +257,7 @@ public class Duke {
                     throw new unmeaningException();
                 }
             }
-            catch (dukeException e ){ // catch one of subclass of dukeException and print the right message
+            catch (dukeException e){ // catch one of subclass of dukeException and print the right message
                 e.print();
             }
             user=sc.nextLine();
