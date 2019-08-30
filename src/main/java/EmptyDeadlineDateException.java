@@ -1,5 +1,5 @@
-public class emptyDeadlineDateException extends dukeException {
-    public emptyDeadlineDateException(){
+public class EmptyDeadlineDateException extends DukeException {
+    public EmptyDeadlineDateException(){
     }
 
     public void print(){

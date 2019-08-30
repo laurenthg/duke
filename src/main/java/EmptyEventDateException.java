@@ -1,5 +1,5 @@
-public class emptyEventDateException extends dukeException {
-    public emptyEventDateException(){
+public class EmptyEventDateException extends DukeException {
+    public EmptyEventDateException(){
     }
 
     public void print(){

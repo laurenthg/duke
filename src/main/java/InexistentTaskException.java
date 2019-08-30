@@ -1,5 +1,5 @@
-public class inexistentTaskException extends dukeException {
-    public inexistentTaskException(){
+public class InexistentTaskException extends DukeException {
+    public InexistentTaskException(){
     }
 
     public void print(){

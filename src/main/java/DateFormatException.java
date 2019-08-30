@@ -1,5 +1,5 @@
-public class dateFormatException extends dukeException {
-    public dateFormatException(){
+public class DateFormatException extends DukeException {
+    public DateFormatException(){
     }
 
     public void print(){

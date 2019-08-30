@@ -1,5 +1,5 @@
-public class inexistentDateException extends dukeException{
-    public inexistentDateException(){
+public class InexistentDateException extends DukeException {
+    public InexistentDateException(){
     }
 
     public void print(){

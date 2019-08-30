@@ -2,10 +2,10 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.zip.DataFormatException;
 
-public class date {
+public class Date {
     private GregorianCalendar d;
 
-    public date(GregorianCalendar d){
+    public Date(GregorianCalendar d){
         this.d = d;
     }
 

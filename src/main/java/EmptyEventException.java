@@ -1,5 +1,5 @@
-public class emptyEventException extends dukeException{
-    public emptyEventException(){
+public class EmptyEventException extends DukeException {
+    public EmptyEventException(){
     }
 
     public void print(){

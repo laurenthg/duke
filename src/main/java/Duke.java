@@ -22,12 +22,12 @@ public class Duke {
         for (int i = 0 ;i< tasks.size() ; i++ ){
             Task t = tasks.get(i);
             System.out.print("\t "+ (i+1) + ". " + t.getTag() +t.getMark() + " " +t.getTask());
-            if (t instanceof deadlinesTask){
-                System.out.println( " by:" + ((deadlinesTask) t).getDeadlines());
+            if (t instanceof DeadlinesTask){
+                System.out.println( " by:" + ((DeadlinesTask) t).getDeadlines());
             }
-            else if ( t instanceof eventsTask){
+            else if ( t instanceof EventsTask){
                 System.out.println( " at:" +
-                        ((eventsTask) t).getDateFirst() + " - " + ((eventsTask) t).getDateSecond());
+                        ((EventsTask) t).getDateFirst() + " - " + ((EventsTask) t).getDateSecond());
             }
             else {
                 System.out.println("");
@@ -58,14 +58,14 @@ public class Duke {
                 mark = line[2];
                 switch ( line[1] ){
                     case "[T]":
-                        tasks.add(new todoTask(line[3],mark));
+                        tasks.add(new TodoTask(line[3],mark));
                         break;
                     case "[D]":
-                        tasks.add(new deadlinesTask(line[3],mark,stringToDate(line[4].substring(4).trim())));
+                        tasks.add(new DeadlinesTask(line[3],mark,stringToDate(line[4].substring(4).trim())));
                         break;
                     case "[E]":
                         tasks.add(
-                                new eventsTask(line[3],mark,stringToDate(line[4].substring(4)), stringToDate(line[5])));
+                                new EventsTask(line[3],mark,stringToDate(line[4].substring(4)), stringToDate(line[5])));
                 }
                 readLine = bufferedReader.readLine();
             }
@@ -73,12 +73,12 @@ public class Duke {
         catch (IOException e){
             display("\t IOException: \n\t\t error when readFile for initialization of tasks list");
         }
-        catch (inexistentDateException e){
+        catch (InexistentDateException e){
             e.print();
         }
     }
 
-    private static date stringToDate(String deadlineString) throws inexistentDateException {
+    private static Date stringToDate(String deadlineString) throws InexistentDateException {
         String[] dateString = deadlineString.split(" ");
         String[] daysString = dateString[0].split("/");
         String[] hoursString = dateString[1].split(":");
@@ -88,33 +88,33 @@ public class Duke {
         int hrs= Integer.parseInt(hoursString[0]) ;
         int min = Integer.parseInt(hoursString[1]);
         if (min<0 || min >59){
-            throw new inexistentDateException();
+            throw new InexistentDateException();
         }
         if (hrs <0 || hrs >23){
-            throw new inexistentDateException();
+            throw new InexistentDateException();
         }
         switch( month){
             case 0: case 2: case 4: case 6: case 7: case 9: case 11: // month with 31 days : 11 for december
                 if (day > 31 || day <0) {
-                    throw new inexistentDateException();
+                    throw new InexistentDateException();
                 }
                 break;
             case 3 : case 5: case 8: case 10: // month with 31 days
                 if (day > 30 || day <0) {
-                    throw new inexistentDateException();
+                    throw new InexistentDateException();
                 }
                 break;
             case 1 : // February
                 // second part : no leap year and day==29
                 if ((day >29 || day < 0) || ((!((year % 4 ==0 && year % 100 != 0) || year % 400 == 0))&& day==29) ){
-                    throw new inexistentDateException();
+                    throw new InexistentDateException();
                 }
                 break;
             default:
-                throw new inexistentDateException();
+                throw new InexistentDateException();
             }
         GregorianCalendar d = new GregorianCalendar(year,month,day,hrs,min);
-        return new date(d);
+        return new Date(d);
     }
 
 
@@ -122,11 +122,11 @@ public class Duke {
         Scanner sc = new Scanner(System.in);
         List<Task> tasks = new ArrayList<Task>(); // Use of ArrayList (A-Collections) to store tasks
         String file = System.getProperty("user.dir")+ "/data/duke.txt"; //file path
-        readFile rFile = new readFile(file);// reader for initialization of tasks list
+        ReadFile rFile = new ReadFile(file);// reader for initialization of tasks list
         BufferedReader bufferedReader = rFile.getBufferedReader();
         initialization(tasks,bufferedReader); //initialization of tasks list from the Duke.txt datafile
         rFile.freeBufferedReader();
-        writeFile wFile = new writeFile(file,true); // true: writer of file by appending txt
+        WriteFile wFile = new WriteFile(file,true); // true: writer of file by appending txt
         displayLogo();
         display("\t Hello I'm Duke\n\t What can I do for you ?");
         String user = sc.nextLine();
@@ -143,14 +143,14 @@ public class Duke {
                 else if (user.matches("done \\d+")) {// if it is done and a number of task
                     int index = Integer.parseInt(user.substring(5)) - 1;
                     if (index > tasks.size() - 1 || index < 0) {
-                        throw new inexistentTaskException();
+                        throw new InexistentTaskException();
                     }
                     else { // to change the mark, the whole file is rewritten ( probably a better way to do it)
                         tasks.get(index).taskDone();
                         Task task = tasks.get(index);
                         String text="" , line ="", oldLine =(index+1)+"//"+task.getTag()+"//"+"[✗]" ,
                                 newLine =(index+1)+"//"+task.getTag()+"//"+task.getMark();
-                        readFile readFile = new readFile(file);// reader to read before change the data file
+                        ReadFile readFile = new ReadFile(file);// reader to read before change the data file
                         BufferedReader bufferedR = readFile.getBufferedReader();
                         try{
                             while ((line = bufferedR.readLine()) != null) {
@@ -165,7 +165,7 @@ public class Duke {
                         }
                         readFile.freeBufferedReader(); //close the reader
                         // false :// rewriter of file by replacing the whole file
-                        writeFile rwFile = new writeFile(file,false);
+                        WriteFile rwFile = new WriteFile(file,false);
                         try{
                             rwFile.write(text);
                         }
@@ -180,13 +180,13 @@ public class Duke {
                 else if (user.matches("delete \\d+")) {// if it is done and a number of task
                     int index = Integer.parseInt(user.substring(7)) - 1;
                     if (index > tasks.size() - 1 || index < 0) {
-                        throw new inexistentTaskException();
+                        throw new InexistentTaskException();
                     }
                     else { // the tasks exist
                         Task removedTask = tasks.remove(index);
                         String text="" , line ="", oldLine =(index+1)+"//"+removedTask.getTag() ,
                                 newLine ="";
-                        readFile readFile = new readFile(file);// reader to read before change the data file
+                        ReadFile readFile = new ReadFile(file);// reader to read before change the data file
                         BufferedReader bufferedR = readFile.getBufferedReader();
                         try{
                             for (int i = 0 ; i< tasks.size()+1 ; i++){ // one task have been just removed
@@ -207,7 +207,7 @@ public class Duke {
                         }
                         readFile.freeBufferedReader(); //close the reader
                         // false :// rewriter of file by replacing the whole file
-                        writeFile rwFile = new writeFile(file,false);
+                        WriteFile rwFile = new WriteFile(file,false);
                         try{
                             rwFile.write(text);
                         }
@@ -222,11 +222,11 @@ public class Duke {
                 }
                 else if (user.matches("todo(.*)")) {
                     if (user.substring(4).isBlank()) {
-                        throw new emptyTodoException();
+                        throw new EmptyTodoException();
                     }
                     else {
-                        tasks.add(new todoTask(user.substring(4).trim()));
-                        todoTask newTask = (todoTask) tasks.get(tasks.size() - 1);
+                        tasks.add(new TodoTask(user.substring(4).trim()));
+                        TodoTask newTask = (TodoTask) tasks.get(tasks.size() - 1);
                         try {
                             wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
                                     newTask.getMark() + "//" + newTask.getTask()+"\n");
@@ -242,10 +242,10 @@ public class Duke {
                 else if (user.matches("deadline (.*)")) {
                     String[] taskDescription = user.substring(8).split("/by");
                     if (taskDescription[0].isBlank()) {
-                        throw new emptyDeadlineException();
+                        throw new EmptyDeadlineException();
                     }
                     else if (taskDescription.length == 1) { // no /by in input
-                        throw new emptyDeadlineDateException();
+                        throw new EmptyDeadlineDateException();
                     }
                     else {
                         String description = taskDescription[0].trim();
@@ -253,12 +253,12 @@ public class Duke {
                         //date format used: dd/MM/yyyy HH:mm
                         String regex ="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]";
                         if (!deadlineString.matches(regex)) {
-                            throw new dateFormatException();
+                            throw new DateFormatException();
                         }
                         else {
-                            date deadline = stringToDate(deadlineString);
-                            tasks.add(new deadlinesTask(description, deadline));
-                            deadlinesTask newTask = (deadlinesTask) tasks.get(tasks.size() - 1);
+                            Date deadline = stringToDate(deadlineString);
+                            tasks.add(new DeadlinesTask(description, deadline));
+                            DeadlinesTask newTask = (DeadlinesTask) tasks.get(tasks.size() - 1);
                             try {
                                 wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
                                         newTask.getMark() + "//" + newTask.getTask() + "//" + " by:"
@@ -276,10 +276,10 @@ public class Duke {
                 else if (user.matches("event (.*)")) {
                     String[] taskDescription = user.substring(5).split("/at");
                     if (taskDescription[0].isBlank()) {
-                        throw new emptyEventException();
+                        throw new EmptyEventException();
                     }
                     else if (taskDescription.length == 1) { // no /by in input
-                        throw new emptyEventDateException();
+                        throw new EmptyEventDateException();
                     }
                     else {
                         String description = taskDescription[0].trim();
@@ -288,14 +288,14 @@ public class Duke {
                         String regex ="[0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9] " +
                                 "- [0-9][0-9]/[0-9][0-9]/[0-9][0-9][0-9][0-9] [0-9][0-9]:[0-9][0-9]";
                         if (!periodString.matches(regex)) {
-                            throw new dateEventFormatException();
+                            throw new DateEventFormatException();
                         }
                         else {
                             String[] dateString = periodString.split(" - ");
-                            date dateFirst = stringToDate(dateString[0]);
-                            date dateSecond = stringToDate(dateString[1]);
-                            tasks.add(new eventsTask(description, dateFirst,dateSecond));
-                            eventsTask newTask = (eventsTask) tasks.get(tasks.size() - 1);
+                            Date dateFirst = stringToDate(dateString[0]);
+                            Date dateSecond = stringToDate(dateString[1]);
+                            tasks.add(new EventsTask(description, dateFirst,dateSecond));
+                            EventsTask newTask = (EventsTask) tasks.get(tasks.size() - 1);
                             try {
                                 wFile.write(tasks.size() + "//" + newTask.getTag() + "//" +
                                         newTask.getMark() + "//" + newTask.getTask() + "//"+
@@ -312,10 +312,10 @@ public class Duke {
                     }
                 }
                 else {
-                    throw new unmeaningException();
+                    throw new UnmeaningException();
                 }
             }
-            catch (dukeException e){ // catch one of subclass of dukeException and print the right message
+            catch (DukeException e){ // catch one of subclass of dukeException and print the right message
                 e.print();
             }
             user=sc.nextLine();

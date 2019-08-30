@@ -1,5 +1,5 @@
-public class unmeaningException extends dukeException{
-    public unmeaningException(){
+public class UnmeaningException extends DukeException {
+    public UnmeaningException(){
     }
 
     public void print(){

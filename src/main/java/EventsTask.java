@@ -1,16 +1,16 @@
-public class eventsTask extends Task {
+public class EventsTask extends Task {
     private String tag; // [E]
-    private date dateFirst;
-    private date dateSecond;
+    private Date dateFirst;
+    private Date dateSecond;
 
-    public eventsTask(String task, date dateFirst,date dateSecond) {
+    public EventsTask(String task, Date dateFirst, Date dateSecond) {
         super(task);
         this.tag = "[E]";
         this.dateFirst = dateFirst;
         this.dateSecond = dateSecond;
     }
 
-    public eventsTask(String task, String mark, date dateFirst, date dateSecond) {
+    public EventsTask(String task, String mark, Date dateFirst, Date dateSecond) {
         super(task);
         super.setMark(mark);
         this.tag = "[E]";
@@ -20,7 +20,7 @@ public class eventsTask extends Task {
 
     public String getTag(){ return this.tag;}
 
-    public date getDateFirst(){ return this.dateFirst;}
-    public date getDateSecond(){ return this.dateSecond; }
+    public Date getDateFirst(){ return this.dateFirst;}
+    public Date getDateSecond(){ return this.dateSecond; }
 }
 

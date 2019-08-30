@@ -1,5 +1,5 @@
-public class emptyTodoException extends dukeException {
-    public emptyTodoException(){
+public class EmptyTodoException extends DukeException {
+    public EmptyTodoException(){
     }
 
     public void print(){

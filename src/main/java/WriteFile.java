@@ -2,12 +2,12 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class writeFile {
+public class WriteFile {
     private BufferedWriter bufferedW;
     private StringBuffer stringBuffer = new StringBuffer();
 
 
-    public writeFile(String file, boolean append){
+    public WriteFile(String file, boolean append){
         try{
             FileWriter fileW = new FileWriter(file,append); // write only for append text on datafile
             this.bufferedW = new BufferedWriter(fileW);

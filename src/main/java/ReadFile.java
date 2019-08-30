@@ -3,10 +3,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class readFile {
+public class ReadFile {
     private BufferedReader bufferedR;
 
-    public readFile(String file){
+    public ReadFile(String file){
         try {
             FileReader fileReader = new FileReader(file);
             this.bufferedR = new BufferedReader(fileReader);
