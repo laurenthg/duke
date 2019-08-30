@@ -177,6 +177,49 @@ public class Duke {
                                     tasks.get(index).getMark() + " " + tasks.get(index).getTask());
                     }
                 }
+                else if (user.matches("delete \\d+")) {// if it is done and a number of task
+                    int index = Integer.parseInt(user.substring(7)) - 1;
+                    if (index > tasks.size() - 1 || index < 0) {
+                        throw new inexistentTaskException();
+                    }
+                    else { // the tasks exist
+                        Task removedTask = tasks.remove(index);
+                        String text="" , line ="", oldLine =(index+1)+"//"+removedTask.getTag() ,
+                                newLine ="";
+                        readFile readFile = new readFile(file);// reader to read before change the data file
+                        BufferedReader bufferedR = readFile.getBufferedReader();
+                        try{
+                            for (int i = 0 ; i< tasks.size()+1 ; i++){ // one task have been just removed
+                                line = bufferedR.readLine();
+                                if (!line.contains(oldLine)){
+                                    if (i > index ) { // we should minus 1 to each line after the line removed
+                                        line = line.replace( (i+1) +"//", (i)+"//"  ) + "\n";
+                                        text += line ;
+                                    }
+                                    else{
+                                        text+= line +"\n";
+                                    }
+                                }
+                            }
+                        }
+                        catch(IOException e){
+                            display("\t IOException: \n\t\t error when reading the whole file");
+                        }
+                        readFile.freeBufferedReader(); //close the reader
+                        // false :// rewriter of file by replacing the whole file
+                        writeFile rwFile = new writeFile(file,false);
+                        try{
+                            rwFile.write(text);
+                        }
+                        catch (IOException e){
+                            display("\t IOException: \n\t\t error when writing the whole file");
+                        }
+                        rwFile.freeBufferedWriter();//free the writer
+                        display("\t Noted. I've removed this task: \n" +
+                                "\t\t "+removedTask.getTag() + removedTask.getMark() + " " + removedTask.getTask()+
+                                "\n\t Now you have "+ tasks.size() +" tasks in the list");
+                    }
+                }
                 else if (user.matches("todo(.*)")) {
                     if (user.substring(4).isBlank()) {
                         throw new emptyTodoException();
