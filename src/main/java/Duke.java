@@ -20,20 +20,28 @@ public class Duke {
         System.out.println("\t---------------------------------------------------------------------------------");
         System.out.println("\t Here are the tasks in your list:");
         for (int i = 0 ;i< tasks.size() ; i++ ){
-            Task t = tasks.get(i);
-            System.out.print("\t "+ (i+1) + ". " + t.getTag() +t.getMark() + " " +t.getTask());
-            if (t instanceof deadlinesTask){
-                System.out.println( " by:" + ((deadlinesTask) t).getDeadlines());
-            }
-            else if ( t instanceof eventsTask){
-                System.out.println( " at:" +
-                        ((eventsTask) t).getDateFirst() + " - " + ((eventsTask) t).getDateSecond());
-            }
-            else {
-                System.out.println("");
-            }
+            System.out.print(displayOneElementList(tasks,i));
         }
         System.out.println("\t---------------------------------------------------------------------------------");
+    }
+
+    /*
+    return the String of display of one element of list of tasks
+     */
+    private static String displayOneElementList(List<Task> tasks, int index){
+        Task t = tasks.get(index);
+        String result = "\t "+ (index+1) + ". " + t.getTag() +t.getMark() + " " +t.getTask();
+        if (t instanceof deadlinesTask){
+            result +=  " by:" + ((deadlinesTask) t).getDeadlines() + "\n";
+        }
+        else if ( t instanceof eventsTask){
+            result +=  " at:" +
+                    ((eventsTask) t).getDateFirst() + " - " + ((eventsTask) t).getDateSecond() + "\n";
+        }
+        else {
+            result += "\n";
+        }
+        return result;
     }
 
     private static void displayLogo(){
@@ -138,6 +146,22 @@ public class Duke {
                     }
                     else {
                         display("\t There is any task yet ");
+                    }
+                }
+                else if (user.matches("find (.*)")) {
+                    String find = user.substring(5);
+                    String result = "";
+                    for ( int i = 0 ; i< tasks.size() ; i++){
+                        if ( tasks.get(i).getTask().contains(find)){
+                            Task  t = tasks.get(i);
+                            result += displayOneElementList(tasks,i);
+                        }
+                    }
+                    if ( result.isEmpty()){
+                        display("\t There is no matching tasks in your list");
+                    }
+                    else {
+                        display("\t Here are the matching tasks in your list: \n" + result );
                     }
                 }
                 else if (user.matches("done \\d+")) {// if it is done and a number of task
