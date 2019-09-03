@@ -129,7 +129,13 @@ public class Duke {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         List<Task> tasks = new ArrayList<Task>(); // Use of ArrayList (A-Collections) to store tasks
-        String file = System.getProperty("user.dir")+ "/data/duke.txt"; //file path
+        String file =""; // file name
+        if (args.length != 0 ){ // test file in case of test
+            file = args[0];
+        }
+        else{ // no test file
+            file = System.getProperty("user.dir")+ "/data/duke.txt";
+        }
         ReadFile rFile = new ReadFile(file);// reader for initialization of tasks list
         BufferedReader bufferedReader = rFile.getBufferedReader();
         initialization(tasks,bufferedReader); //initialization of tasks list from the Duke.txt datafile
