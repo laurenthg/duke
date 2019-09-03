@@ -4,6 +4,40 @@ public class Parser {
     public Parser(){
     }
 
+    public Command parse(String user){
+        Command c ;
+        if (user.equals("list")) {
+            c = new ListCommand(user);
+        }
+        else if (user.matches("find (.*)")) {
+            c = new FindCommand(user);
+        }
+        else if (user.matches("done \\d+")) {// if it is done and a number of task
+            c = new DoneCommand(user);
+        }
+        else if (user.matches("delete \\d+")) {// if it is done and a number of task
+            c = new DeleteCommand(user);
+        }
+        else if (user.matches("todo(.*)")) {
+            c = new TodoCommand(user);
+        }
+        else if (user.matches("deadline (.*)")) {
+            c = new DeadlineCommand(user);
+        }
+        else if (user.matches("event (.*)")) {
+            c = new EventCommand(user);
+        }
+        else if (user.matches(("bye"))){
+            c = new ByeCommand(user);
+        }
+        else {
+            c = new UnmeaningCommand(user);
+        }
+        return c ;
+
+    }
+
+
     public Date stringToDate(String deadlineString, Ui ui) throws InexistentDateException {
         String[] dateString = deadlineString.split(" ");
         String[] daysString = dateString[0].split("/");

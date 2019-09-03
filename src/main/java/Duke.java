@@ -1,8 +1,4 @@
-import jdk.jfr.Event;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.List;
 
 public class Duke {
     private Ui ui;
@@ -13,7 +9,7 @@ public class Duke {
     public Duke(String[] filePath) {
         this.ui = new Ui();
         this.parser = new Parser();
-        String file  =""; // file name
+        String file; // file name
         if (filePath.length != 0 ){ // test file in case of test
             file = filePath[0];
         }
@@ -32,52 +28,16 @@ public class Duke {
         }
     }
 
-
     public void run() {
         this.ui.showWelcome();
         this.storage.getNewAppendWrite(this.storage.getFilePath(),ui);
         boolean isExit = false;
-        //while (!user.equals("bye")){
         while (!isExit){
             try {
                 String user = this.ui.readCommand();
-                if (user.equals("list")) {
-                    ListCommand l = new ListCommand(user);
-                    l.execute(tasks,ui,storage,parser);
-                }
-                else if (user.matches("find (.*)")) {
-                    FindCommand f = new FindCommand(user);
-                    f.execute(tasks,ui,storage,parser);
-                }
-                else if (user.matches("done \\d+")) {// if it is done and a number of task
-                    DoneCommand d = new DoneCommand(user);
-                    d.execute(tasks,ui,storage,parser);
-                }
-                else if (user.matches("delete \\d+")) {// if it is done and a number of task
-                    DeleteCommand de = new DeleteCommand(user);
-                    de.execute(tasks,ui,storage,parser);
-                }
-                else if (user.matches("todo(.*)")) {
-                    TodoCommand todo = new TodoCommand(user);
-                    todo.execute(tasks,ui,storage,parser);
-                }
-                else if (user.matches("deadline (.*)")) {
-                    DeadlineCommand dead = new DeadlineCommand(user);
-                    dead.execute(tasks,ui,storage,parser);
-                }
-                else if (user.matches("event (.*)")) {
-                    EventCommand event = new EventCommand(user);
-                    event.execute(tasks,ui,storage,parser);
-                }
-                else if (user.matches(("bye"))){
-                    ByeCommand bye = new ByeCommand(user);
-                    bye.execute(tasks,ui,storage,parser);
-                    isExit = true;
-                }
-                else {
-                    UnmeaningCommand unmeaningCommand = new UnmeaningCommand(user);
-                    unmeaningCommand.execute(tasks,ui,storage,parser);
-                }
+                Command c = parser.parse(user);
+                c.execute(tasks, ui, storage,parser); // parser is needed beacause stringToDate is in Parser class
+                isExit = c.isExit();
             }
             catch (DukeException e){ // catch one of subclass of dukeException and print the right message
                 e.print();
