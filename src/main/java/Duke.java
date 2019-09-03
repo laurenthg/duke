@@ -125,13 +125,16 @@ public class Duke {
         return new Date(d);
     }
 
+    private Scanner sc;
+    private List<Task> tasks;
+    private String file;
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        List<Task> tasks = new ArrayList<Task>(); // Use of ArrayList (A-Collections) to store tasks
-        String file =""; // file name
-        if (args.length != 0 ){ // test file in case of test
-            file = args[0];
+    public Duke(String[] filePath) {
+        this.sc = new Scanner(System.in);
+        this.tasks = new ArrayList<Task>(); // Use of ArrayList (A-Collections) to store tasks
+        this.file =""; // file name
+        if (filePath.length != 0 ){ // test file in case of test
+            file = filePath[0];
         }
         else{ // no test file
             file = System.getProperty("user.dir")+ "/data/duke.txt";
@@ -140,6 +143,9 @@ public class Duke {
         BufferedReader bufferedReader = rFile.getBufferedReader();
         initialization(tasks,bufferedReader); //initialization of tasks list from the Duke.txt datafile
         rFile.freeBufferedReader();
+    }
+
+    public void run() {
         WriteFile wFile = new WriteFile(file,true); // true: writer of file by appending txt
         displayLogo();
         display("\t Hello I'm Duke\n\t What can I do for you ?");
@@ -351,5 +357,9 @@ public class Duke {
         }
         display("\t Bye. Hope to see you again soon!");
         wFile.freeBufferedWriter();  // close() bufferedwriter
+    }
+
+    public static void main(String[] args) {
+        new Duke(args).run();
     }
 }
