@@ -5,14 +5,16 @@ import java.io.IOException;
 
 public class ReadFile {
     private BufferedReader bufferedR;
+    private Ui ui;
 
-    public ReadFile(String file){
+    public ReadFile(String file, Ui ui){
+        this.ui=ui;
         try {
             FileReader fileReader = new FileReader(file);
             this.bufferedR = new BufferedReader(fileReader);
         }
         catch (FileNotFoundException e){
-            Duke.display("\t FileNotFoundException: \n\t\t the " + file +" isn't found ");
+            ui.display("\t FileNotFoundException: \n\t\t the " + file +" isn't found ");
         }
         /*
         catch (IOException e){
@@ -30,7 +32,7 @@ public class ReadFile {
             this.bufferedR.close();
         }
         catch (IOException e){
-            Duke.display("\t IOException: \n\t\t error when close the bufferedReader");
+            ui.display("\t IOException: \n\t\t error when close the bufferedReader");
         }
     }
 }

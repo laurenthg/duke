@@ -1,8 +1,9 @@
 public class EmptyEventException extends DukeException {
-    public EmptyEventException(){
+    public EmptyEventException(Ui ui){
+        super(ui);
     }
 
     public void print(){
-        Duke.display("\t emptyEventException:\n\t\t ☹ OOPS!!! The description of a event task cannot be empty");
+        super.ui.display("\t emptyEventException:\n\t\t ☹ OOPS!!! The description of a event task cannot be empty");
     }
 }

@@ -1,8 +1,9 @@
 public class EmptyDeadlineException extends DukeException {
-    public EmptyDeadlineException(){
+    public EmptyDeadlineException(Ui ui){
+        super(ui);
     }
 
     public void print(){
-        Duke.display("\t emptyDeadlineException:\n\t\t ☹ OOPS!!! The description of a deadline task cannot be empty");
+        super.ui.display("\t emptyDeadlineException:\n\t\t ☹ OOPS!!! The description of a deadline task cannot be empty");
     }
 }

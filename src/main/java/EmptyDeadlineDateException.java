@@ -1,8 +1,9 @@
 public class EmptyDeadlineDateException extends DukeException {
-    public EmptyDeadlineDateException(){
+    public EmptyDeadlineDateException(Ui ui){
+        super(ui);
     }
 
     public void print(){
-        Duke.display("\t emptyDeadlineDateException:\n\t\t ☹ OOPS!!! Please enter a deadline for the task");
+        super.ui.display("\t emptyDeadlineDateException:\n\t\t ☹ OOPS!!! Please enter a deadline for the task");
     }
 }

@@ -1,9 +1,10 @@
 public class DateFormatException extends DukeException {
-    public DateFormatException(){
+    public DateFormatException(Ui ui){
+        super(ui);
     }
 
     public void print(){
-        Duke.display("\t dateFormatException:\n\t\t ☹ OOPS!!! Please respect the date format\n\t\t\t " +
+        super.ui.display("\t dateFormatException:\n\t\t ☹ OOPS!!! Please respect the date format\n\t\t\t " +
                 "dd/MM/yyyy HH:mm");
     }
 }

@@ -1,8 +1,9 @@
 public class InexistentTaskException extends DukeException {
-    public InexistentTaskException(){
+    public InexistentTaskException(Ui ui){
+        super(ui);
     }
 
     public void print(){
-        Duke.display("\t inexistentTaskException:\n\t\t ☹ OOPS!!! The task doesn't exist");
+        super.ui.display("\t inexistentTaskException:\n\t\t ☹ OOPS!!! The task doesn't exist");
     }
 }

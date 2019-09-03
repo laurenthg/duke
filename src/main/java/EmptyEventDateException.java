@@ -1,8 +1,9 @@
 public class EmptyEventDateException extends DukeException {
-    public EmptyEventDateException(){
+    public EmptyEventDateException(Ui ui){
+        super(ui);
     }
 
     public void print(){
-        Duke.display("\t emptyEventDateException:\n\t\t ☹ OOPS!!! Please enter a period for the event task");
+        super.ui.display("\t emptyEventDateException:\n\t\t ☹ OOPS!!! Please enter a period for the event task");
     }
 }
