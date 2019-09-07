@@ -1,30 +1,57 @@
 import java.util.List;
 
+/**
+ * Represents the list of tasks.
+ */
 public class TaskList {
     private List<Task> tasks;
 
+    /**
+     * Constructor of tasks list.
+     * @param tasks Arraylist of tasks.
+     */
     public TaskList(List<Task> tasks){
         this.tasks = tasks;
     }
 
+    /**
+     * Returns the task in the position i of the tasks list.
+     * @param i position of the task in the tasks list to returns.
+     * @return the task in the position i of the tasks list.
+     */
     public Task get(int i ){
         return this.tasks.get(i);
     }
 
+    /**
+     * Add a task to the tasks list.
+     * @param t the task to add.
+     */
     public void add(Task t ){
         this.tasks.add(t);
     }
 
+    /**
+     * Returns the size of the tasks list.
+     * @return size of the tasks list.
+     */
     public int size(){
         return this.tasks.size();
     }
 
+    /**
+     * Returns the task which is removed from the tasks list at the position i.
+     * @param i the position of the task to remove in the tasks list.
+     * @return the task which is removed from the tasks list at the position i.
+     */
     public Task remove( int i){
         return this.tasks.remove(i);
     }
 
-    /*
-    return the String of display of one element of list of tasks
+    /**
+     * Returns the String of display of one element of the list of tasks.
+     * @param index the position of the task to display in the tasks list.
+     * @return the String of display of one element of the list of tasks.
      */
     public String displayOneElementList(int index){
         Task t = this.tasks.get(index);

@@ -1,10 +1,29 @@
 import java.io.IOException;
 
+/**
+ * Represents a event task Command.
+ * Allow to add a event task to the task list and to the data file.
+ */
 public class EventCommand extends Command {
+    /**
+     * Constructor of EventCommand.
+     * @param user String which represent the input string of the user.
+     */
     public  EventCommand(String user){
         super(user);
     }
 
+    /**
+     * Allow to add a event task to the task list and to the data file.
+     * @param tasks TaskList which is the list of task.
+     * @param ui Ui which deals with the interactions with the user.
+     * @param storage Storage which deals with loading tasks from the file and saving tasks in the file.
+     * @param parser Parser which deals with making sense of the user command.
+     * @throws EmptyEventDateException Exception caught when the period of the event task is not given by the user.
+     * @throws EmptyEventException Exception caught when the description of the event task is not given by the user.
+     * @throws DateEventFormatException Exception caught when the format of the period of the event task is not correct.
+     * @throws InexistentDateException Exception caught when one of the two date given does not exist.
+     */
     public void execute(TaskList tasks, Ui ui , Storage storage, Parser parser)
             throws EmptyEventDateException , EmptyEventException , DateEventFormatException, InexistentDateException{
         String[] taskDescription = user.substring(5).split("/at");
@@ -45,6 +64,11 @@ public class EventCommand extends Command {
         }
     }
 
+
+    /**
+     * Returns a boolean false as it is a event command.
+     * @return a boolean false.
+     */
     public boolean isExit(){
         return false;
     }

@@ -3,14 +3,29 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a Storage which deals with loading tasks from the file and saving tasks in the file.
+ */
 public class Storage {
     private String filePath;
     private WriteFile appendWrite;
 
+    /**
+     * Constructor of Storage
+     * @param filePath String representing the path of the file
+     */
     public Storage(String filePath){
         this.filePath = filePath;
     }
 
+    /**
+     * Returns the tasks list initialized with the data in the data file.
+     * @param parser Parser which deals with making sense of the user command.
+     * @param ui Ui which deals with the interactions with the user.
+     * @return the tasks list initialized with the date in the data file.
+     * @throws IOException Exception caught when the error occurred during the reading of the data file.
+     * @throws InexistentDateException Exception caught when the date of an event or deadline task present in the data file does not exist.
+     */
     public List<Task> load(Parser parser, Ui ui) throws IOException, InexistentDateException{ // load the initial data file
         ReadFile rFile = new ReadFile(this.filePath,ui);// reader for initialization of tasks list
         BufferedReader bufferedReader = rFile.getBufferedReader();
@@ -38,18 +53,39 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Getter of the path of the file.
+     * @return String representing the path of the file.
+     */
     public String getFilePath() {
         return filePath;
     }
 
+    /**
+     * Getter with returns the writer of file.
+     * @return the writer of file.
+     */
     public WriteFile getAppendWrite() {
         return appendWrite;
     }
 
+    /**
+     * Create a new writer of file for the fields of Storage class.
+     * @param file String representing the path of the file.
+     * @param ui Ui which deals with the interactions with the user.
+     */
     public void getNewAppendWrite(String file, Ui ui){
         this.appendWrite = new WriteFile(file,true,ui);
     }
 
+    /**
+     * Returns a String representing the data of the data file without the task which need to be removed.
+     * @param removedTask task to remove from the tasks list and data file.
+     * @param index the position of the removed task.
+     * @param ui Ui which deals with the interactions with the user.
+     * @param tasksSize size of the tasks list after removed the task.
+     * @return a String representing the data of the data file without the task which need to be removed.
+     */
     public String getDeleteTaskString(Task removedTask, int index , Ui ui, int tasksSize){
         String text="" , line ="", oldLine =(index+1)+"//"+removedTask.getTag() ,
                 newLine ="";
@@ -76,7 +112,13 @@ public class Storage {
         return text;
     }
 
-
+    /**
+     * Returns a String representing the data of the data file after mark done to the specific task.
+     * @param tasks tasks list.
+     * @param index the position of the removed task.
+     * @param ui Ui which deals with the interactions with the user.
+     * @return a String representing the data of the data file after mark done to the specific task.
+     */
     public String getDoneString(TaskList tasks , int index, Ui ui){ //returns String by replacing the done task
         Task task = tasks.get(index);
         String text="" , line, oldLine =(index+1)+"//"+task.getTag()+"//"+"[✗]" ,
@@ -98,6 +140,11 @@ public class Storage {
         return text;
     }
 
+    /**
+     * Allows to rewrite the whole file ( write the String text to the file).
+     * @param text String representing the text to write on the file.
+     * @param ui Ui which deals with the interactions with the user.
+     */
     public void rewriteFile(String text, Ui ui){
         WriteFile rwFile = new WriteFile(this.filePath,false,ui);
         try{

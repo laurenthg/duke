@@ -1,11 +1,21 @@
 import java.io.IOException;
 
+/**
+ * Represents the main program Duke.
+ * Run the project from here.
+ */
 public class Duke {
     private Ui ui;
     private TaskList tasks;
     private Storage storage;
     private Parser parser;
 
+    /**
+     * Constructor of Duke class.
+     * Initialization of ui,parser, tasks list and storage.
+     * The tasks will load the information provided by the data file.
+     * @param filePath String which represents the path of the data file to load.
+     */
     public Duke(String[] filePath) {
         this.ui = new Ui();
         this.parser = new Parser();
@@ -28,6 +38,9 @@ public class Duke {
         }
     }
 
+    /**
+     * Method which run the duke program.
+     */
     public void run() {
         this.ui.showWelcome();
         this.storage.getNewAppendWrite(this.storage.getFilePath(),ui);
@@ -46,6 +59,10 @@ public class Duke {
         this.storage.getAppendWrite().freeBufferedWriter();  // close() bufferedwriter
     }
 
+    /**
+     * Main of Duke.
+     * @param args String[] which could be the data file to load.
+     */
     public static void main(String[] args) {
         new Duke(args).run();
     }

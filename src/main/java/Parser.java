@@ -1,9 +1,20 @@
 import java.util.GregorianCalendar;
 
+/**
+ * Represents a Parser which deals with making sense of the user command.
+ */
 public class Parser {
+    /**
+     * Constructor of a Parser.
+     */
     public Parser(){
     }
 
+    /**
+     * Returns the Command instanced according to the input string of the user.
+     * @param user String which represent the input string of the user.
+     * @return a Command which is asked by the user.
+     */
     public Command parse(String user){
         Command c ;
         if (user.equals("list")) {
@@ -37,7 +48,15 @@ public class Parser {
 
     }
 
-
+    /**
+     * Returns the date represented by the String deadlineString in the parameter.
+     * This method allows to convert a String to Date.
+     * The existence of the String representing the date is verified.
+     * @param deadlineString String which represents a date.
+     * @param ui Ui which deals with the interactions with the user.
+     * @return a date.
+     * @throws InexistentDateException caught when the date does not exist.
+     */
     public Date stringToDate(String deadlineString, Ui ui) throws InexistentDateException {
         String[] dateString = deadlineString.split(" ");
         String[] daysString = dateString[0].split("/");

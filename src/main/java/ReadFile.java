@@ -3,10 +3,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ * Represents a reader of file.
+ */
 public class ReadFile {
     private BufferedReader bufferedR;
     private Ui ui;
 
+    /**
+     * Constructor of ReadFile.
+     * @param file String representing of the path of the file.
+     * @param ui Ui which deals with the interactions with the user.
+     */
     public ReadFile(String file, Ui ui){
         this.ui=ui;
         try {
@@ -16,17 +24,19 @@ public class ReadFile {
         catch (FileNotFoundException e){
             ui.display("\t FileNotFoundException: \n\t\t the " + file +" isn't found ");
         }
-        /*
-        catch (IOException e){
-            Duke.display("\t IOException: \n\t\t error with fileReader");
-        }
-        */
     }
 
+    /**
+     * Returns the buffer of the reader.
+     * @return the buffer of the reader.
+     */
     public BufferedReader getBufferedReader() {
         return bufferedR;
     }
 
+    /**
+     * Allow to close the buffer of the reader.
+     */
     public void freeBufferedReader(){
         try {
             this.bufferedR.close();
