@@ -5,8 +5,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Represents a JUnit test class for the DeadlineCommand.
+ */
 public class DeadlineCommandTest {
 
+    /**
+     * Represents a JUnit test method for the DeadlineCommand.
+     * Test the command depending on the input String (user).
+     */
     @Test
     public void deadlineCommandExecuteTest() {
         Ui ui = new Ui();

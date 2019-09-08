@@ -2,7 +2,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Represents a JUnit test class for the Parser.
+ */
 public class ParserTest {
+
+    /**
+     * Represents a JUnit test method to test if the parser could
+     * create the right command depending on the input String (user).
+     */
     @Test
     public void commandCreatedTest(){
         Parser parser = new Parser();
@@ -21,6 +29,11 @@ public class ParserTest {
         assertFalse(parser.parse("bye " )instanceof ByeCommand);
     }
 
+    /**
+     * Represents a JUnit test method to test the method stringToDate.
+     * Test if this method could convert string to a Date type only in case of
+     * the date really exist.
+     */
     @Test
     public void stringToDateTest() {
         Parser parser = new Parser();
