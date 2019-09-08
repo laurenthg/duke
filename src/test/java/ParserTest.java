@@ -25,70 +25,101 @@ public class ParserTest {
     public void stringToDateTest() {
         Parser parser = new Parser();
         Ui ui = new Ui();
-        int test = 0;
-        try{ // no catch => test = 0
+
+        boolean test1 = false;
+        try{ // no catch
             parser.stringToDate("12/12/1222 22:22",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test1 = true;
         }
+        assertFalse(test1);
 
-        try{ // catch => test = 1
+
+
+        boolean test2 = false;
+        try{ // catch
             parser.stringToDate("31/11/1222 22:22",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test2 = true;
         }
+        assertTrue(test2);
 
-        try{ // catch => test =2
+
+
+        boolean test3 = false;
+        try{ // catch
             parser.stringToDate("35/12/1222 22:22",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test3 = true;
         }
+        assertTrue(test3);
 
-        try{ // catch => test = 3
+
+
+        boolean test4 = false;
+        try{ // catch
             parser.stringToDate("29/02/2021 22:22",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test4 = true;
         }
+        assertTrue(test4);
 
-        try{ // catch => test = 4
+
+
+        boolean test5 = false;
+        try{ // catch
             parser.stringToDate("29/13/2021 22:22",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test5 = true;
         }
+        assertTrue(test5);
 
-        try{ // catch => test = 5
+
+
+        boolean test6 = false;
+        try{ // catch
             parser.stringToDate("29/12/2021 25:22",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test6 = true;
         }
+        assertTrue(test6);
 
-        try{ // catch => test = 6
+
+        boolean test7 = false;
+        try{ // catch
             parser.stringToDate("29/12/2021 24:00",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test7 = true;
         }
+        assertTrue(test7);
 
-        try{ // catch => test = 7
+
+
+        boolean test8 = false;
+        try{ // catch
             parser.stringToDate("29/12/2021 23:60",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test8 = true;
         }
+        assertTrue(test8);
 
-        try{ // catch => test = 8
+
+        boolean test9 = false;
+        try{ // catch
             parser.stringToDate("-29/12/2021 23:60",ui);
         }
         catch (InexistentDateException e){
-            test++;
+            test9 = true;
         }
+        assertTrue(test9);
 
-        assertEquals(8,test);
     }
 }
